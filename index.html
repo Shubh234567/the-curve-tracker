@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 </head>
 <body>
-<title>The Curve Collection Tracker</title>
+<title>The Curve Tracker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -20,36 +20,14 @@
   --red:#ff5252;--red-d:#280a0a;--red-b:#3d1010;
   --purple:#9d7dfa;--purple-d:#150d30;--purple-b:#2a1e52;
   --teal:#22d3ee;--teal-d:#062430;--teal-b:#0a3a45;
-  --font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
-  color-scheme:dark;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
+:root{color-scheme:dark;background:var(--bg)}
 html,body{height:100%}
-html{background:var(--bg)}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5}
 .app{display:flex;height:100%;overflow:hidden}
-td.mono,.sv,.pc-big{font-variant-numeric:tabular-nums}
-.btn:focus-visible,.nav-btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
-.save-pill.readonly{background:var(--bg4);color:var(--text2);border-color:var(--border2)}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:300;max-width:min(520px,calc(100% - 32px));background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:.6rem 1rem;border-radius:8px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.toast.ok{border-color:var(--green-b);color:var(--green)}
-.toast.err{border-color:var(--red-b);color:var(--red)}
-.confirm-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;max-width:420px;width:100%;padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
-.confirm-box h3{font-size:14px;font-weight:600}
-.confirm-box p{font-size:12px;color:var(--text2)}
-.confirm-actions{display:flex;justify-content:flex-end;gap:8px}
-.btn.danger{background:var(--red-d);color:var(--red);border-color:var(--red-b)}
-@media(max-width:760px){
-  .app{flex-direction:column;height:auto;overflow:visible}
-  .sidebar{width:auto;border-right:none;border-bottom:1px solid var(--border);overflow:visible}
-  .main{overflow:visible}
-  .nav-list{display:flex;flex-wrap:wrap;gap:4px;padding:0 6px 8px}
-  .nav-list .nav-btn{width:auto;margin:0}
-  .sb-stages,.sb-foot{display:none!important}
-  .topbar{padding:.75rem 16px}
-  .content{padding:1rem 16px}
-}
 .sidebar{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 .logo{padding:1rem;border-bottom:1px solid var(--border)}
@@ -165,22 +143,34 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .stage-due{color:var(--text3)}
 .link-flat{color:var(--blue);cursor:pointer;text-decoration:none}
 .link-flat:hover{text-decoration:underline}
+.btn:focus-visible,.nav-btn:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.ro .w-only{display:none!important}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:200;max-width:min(520px,calc(100vw - 32px));background:var(--bg3);border:1px solid var(--green-b);color:var(--text);padding:.6rem 1rem;border-radius:8px;font-size:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast.err{border-color:var(--red-b);color:var(--red)}
+@media(max-width:760px){
+  .app{flex-direction:column;height:auto;overflow:visible}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);overflow:visible;flex-direction:row;flex-wrap:wrap;align-items:center;padding:0 10px 8px;gap:4px}
+  .sidebar .nav-section,#stage-legend,.sidebar>div:last-child{display:none}
+  .logo{width:100%;border-bottom:none;padding:.75rem 6px .25rem}
+  .nav-btn{width:auto;margin:0;padding:.4rem .6rem;font-size:11px}
+  .main{overflow:visible}
+  .topbar,.content{padding-left:16px;padding-right:16px}
+  .topbar h1{width:100%}
+}
 </style>
 <div class="app">
 <div class="sidebar">
   <div class="logo"><h2>The <span>Curve</span></h2><p>54 Chowringhee Road, Kolkata</p></div>
   <div class="nav-section">Views</div>
-  <div class="nav-list">
   <button class="nav-btn active" data-v="dashboard" onclick="switchView('dashboard')"><span class="dot"></span>Dashboard</button>
   <button class="nav-btn" data-v="flats" onclick="switchView('flats')"><span class="dot"></span>Flat-wise Tracker</button>
   <button class="nav-btn" data-v="statement" onclick="switchView('statement')"><span class="dot"></span>Flat Statement (stage-wise)</button>
   <button class="nav-btn" data-v="partywise" onclick="switchView('partywise')"><span class="dot"></span>Party-wise Detail (per stage)</button>
   <button class="nav-btn" data-v="monthwise" onclick="switchView('monthwise')"><span class="dot"></span>Month-wise Summary</button>
   <button class="nav-btn" data-v="landowner" onclick="switchView('landowner')"><span class="dot"></span>Landowner Transfer</button>
-  </div>
-  <div class="nav-section sb-stages" style="margin-top:.5rem">Schedule D — Stages</div>
-  <div class="sb-stages" style="padding:0 .75rem;font-size:10px;color:var(--text3);line-height:1.7" id="stage-legend"></div>
-  <div class="sb-foot" style="padding:.75rem;margin-top:auto;border-top:1px solid var(--border)">
+  <div class="nav-section" style="margin-top:.5rem">Schedule D — Stages</div>
+  <div style="padding:0 .75rem;font-size:10px;color:var(--text3);line-height:1.7" id="stage-legend"></div>
+  <div style="padding:.75rem;margin-top:auto;border-top:1px solid var(--border)">
     <div style="font-size:10px;color:var(--text3);line-height:1.6">
       Developer: Amba Highrise<br>Owner: Chowringhee Planners<br>Split: 32.5% / 67.5%<br>GST: 5% · Buyer TDS: 1% (194-IA)<br>Owner-pay TDS: 1% (194-IA)<br>Deposit: ₹20 Cr
     </div>
@@ -193,13 +183,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <span id="save-status" class="save-pill" title="Save status">Loading…</span>
       <select id="filter-month" class="btn" style="min-width:130px" onchange="refresh()"><option value="">All months</option></select>
       <button class="btn" onclick="exportExcel()" title="Download the full automated Excel workbook (7 sheets, live formulas)">⤓ Excel</button>
-      <button class="btn" onclick="document.getElementById('xlsx-file').click()" title="Sync data IN from an Excel workbook (.xlsx)">⤒ Import Excel</button>
+      <button class="btn w-only" onclick="document.getElementById('xlsx-file').click()" title="Sync data IN from an Excel workbook (.xlsx)">⤒ Import Excel</button>
       <button class="btn" onclick="exportData()" title="Download all data as a JSON backup">⭳ JSON</button>
-      <button class="btn" onclick="document.getElementById('import-file').click()" title="Restore data from a JSON backup">⭱ Import JSON</button>
-      <button class="btn" onclick="resetData()" title="Clear all data and restore 30 blank flats">↺ Reset</button>
+      <button class="btn w-only" onclick="document.getElementById('import-file').click()" title="Restore data from a JSON backup">⭱ Import JSON</button>
+      <button class="btn w-only" onclick="resetData()" title="Clear saved data and reload sample data">↺ Reset</button>
       <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(this)">
       <input type="file" id="xlsx-file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none" onchange="importExcel(this)">
-      <button class="btn primary" onclick="addFlat()">+ Add / Edit Flat</button>
+      <button class="btn primary w-only" onclick="addFlat()">+ Add / Edit Flat</button>
     </div>
   </div>
   <div class="content">
@@ -298,12 +288,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <div class="modal-footer"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveFlat()">Save Flat</button></div>
 </div></div>
 
-<div class="modal-overlay" id="confirm" hidden><div class="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-  <h3 id="confirm-title">Confirm</h3>
-  <p id="confirm-msg"></p>
-  <div class="confirm-actions"><button class="btn" id="confirm-no">Cancel</button><button class="btn danger" id="confirm-yes">Confirm</button></div>
+<div class="modal-overlay" id="confirm" hidden><div class="modal" style="max-width:440px" role="alertdialog" aria-labelledby="confirm-msg">
+  <div class="modal-body"><p id="confirm-msg" style="font-size:13px;line-height:1.6"></p></div>
+  <div class="modal-footer"><button class="btn" id="confirm-cancel">Cancel</button><button class="btn" id="confirm-ok" style="color:var(--red);border-color:var(--red-b);background:var(--red-d)">Confirm</button></div>
 </div></div>
-<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
 const GST=.05,TDS=.01,DEV=.325,OWN=.675,DEPOSIT=2e8,DEP_SPLIT=.5;
@@ -321,144 +310,113 @@ const STAGES=[
   {n:'Windows / Glazing Installation',pct:.05},
   {n:'On Possession',pct:.05},
 ];
-let flats=[],editIdx=-1,editFlatNo=null,charts={},collEntries=[];
+let flats=[],editIdx=-1,charts={},collEntries=[];
 
-/* ─── LIVE TEAM STORAGE ───
-   Each flat is one document in the artifact's shared database (collection "flats"),
-   so two people editing different flats never overwrite each other. Changes from
-   teammates stream in live. Outside the Claude viewer it falls back to this browser. */
+/* ─── TEAM-SHARED STORAGE (one document per flat, live for everyone) ─── */
 const LOCAL_KEY='thecurve:flats:v1';
-const COLL='flats';
 let STORAGE_MODE='loading';   // 'cloud' | 'local' | 'memory'
-let DB=null, storeIds=new Set(), canWrite=true, lastSnapJson='';
+let DB=null,CAN_WRITE=true,SNAP_READY=false,storedIds=new Set(),writing=0,pendingSnap=null;
+const flatsCol=()=>DB.collection('flats');
+function newId(){return 'flat-'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function ensureIds(){const seen=new Set();flats.forEach((f,i)=>{if(!f._id||seen.has(f._id))f._id=newId()+i;seen.add(f._id);f.order=i;});}
 
-function flatDocId(no){return ('f_'+String(no||'blank')).replace(/[^A-Za-z0-9_\-.~:@+]/g,'_').slice(0,190);}
-function cleanText(v){return String(v==null?'':v).replace(/[<>"'`\\]/g,'').trim();}
-function num(v,d){const n=Number(v);return isFinite(n)?n:(d||0);}
-function sanitizeFlat(f,order){
-  const colls=STAGES.map((s,i)=>{const c=(f&&Array.isArray(f.collections)&&f.collections[i])||{};
-    return{inst:i,date:/^\d{4}-\d{2}-\d{2}$/.test(String(c.date||''))?String(c.date):'',received:!!c.received,base:num(c.base),demand:num(c.demand),gst:num(c.gst),tds:num(c.tds),net:num(c.net),dev:num(c.dev),own:num(c.own)};});
-  return{flatNo:cleanText(f.flatNo),floor:num(f.floor),name:cleanText(f.name),pan:cleanText(f.pan).toUpperCase(),addr:cleanText(f.addr),
-    builtArea:num(f.builtArea),saleArea:num(f.saleArea),parking:num(f.parking),agDate:/^\d{4}-\d{2}-\d{2}$/.test(String(f.agDate||''))?String(f.agDate):'',
-    basePrice:num(f.basePrice,20000000)||20000000,parkPrice:num(f.parkPrice,1000000),status:['Active','Pending','Completed'].includes(f.status)?f.status:'Pending',
-    order:num(f.order,order||0),collections:colls};
+let toastTimer=null;
+function toast(msg,kind){
+  const el=document.getElementById('toast');if(!el)return;
+  el.textContent=msg;el.className='toast'+(kind?' '+kind:'');el.hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.hidden=true;},kind==='err'?7000:4000);
+}
+function askConfirm(msg,okLabel){
+  return new Promise(res=>{
+    const ov=document.getElementById('confirm');
+    document.getElementById('confirm-msg').textContent=msg;
+    const ok=document.getElementById('confirm-ok'),no=document.getElementById('confirm-cancel');
+    ok.textContent=okLabel||'Confirm';ov.hidden=false;ok.focus();
+    const done=v=>{ov.hidden=true;ok.onclick=no.onclick=null;res(v);};
+    ok.onclick=()=>done(true);no.onclick=()=>done(false);
+  });
 }
 
 function setStatus(state){
   const el=document.getElementById('save-status');if(!el)return;
-  const modeLabel=STORAGE_MODE==='cloud'?'Live · team-shared':STORAGE_MODE==='local'?'This browser only':'Not saved';
+  const modeLabel=STORAGE_MODE==='cloud'?'Team-shared · live':STORAGE_MODE==='local'?'Local (this device)':'Not saved';
   const map={
-    loading:['','Connecting…'],
-    pending:['pending','Editing…'],
+    loading:['','Loading…'],
     saving:['saving','Saving…'],
     saved:['saved','Saved · '+modeLabel],
-    empty:['pending','Blank template · not saved yet'],
     error:['error','Save failed'],
-    readonly:['readonly','View only'],
-    local:['local','Saved · This browser only'],
+    local:['local','Saved · Local (this device)'],
+    readonly:['local','View only · live'],
   };
   const [cls,txt]=map[state]||['','—'];
   el.className='save-pill '+cls;
   el.textContent=txt;
 }
+function setReadOnly(){CAN_WRITE=false;document.body.classList.add('ro');setStatus('readonly');}
+function handleWriteError(e){
+  const code=e&&e.code;
+  setStatus('error');
+  if(code==='invalid_argument'){setReadOnly();toast('You have view-only access, so this change was not saved. Ask the owner for Contributor access.','err');}
+  else if(code==='quota_exceeded')toast('Storage is full: '+(e.message||'quota reached')+'. Remove unused flats and try again.','err');
+  else toast('Could not save. Check your connection and try again.','err');
+}
+async function writeFlat(f){await flatsCol().doc(f._id).set(JSON.parse(JSON.stringify(f)));storedIds.add(f._id);}
 
-let toastTimer=null;
-function toast(msg,kind){
-  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(kind||'');t.hidden=false;
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.hidden=true;},4500);
-}
-function askConfirm(title,msg,yesLabel){
-  return new Promise(res=>{
-    const box=document.getElementById('confirm');
-    document.getElementById('confirm-title').textContent=title;
-    document.getElementById('confirm-msg').textContent=msg;
-    const yes=document.getElementById('confirm-yes'),no=document.getElementById('confirm-no');
-    yes.textContent=yesLabel||'Confirm';
-    const done=v=>{box.hidden=true;yes.onclick=no.onclick=null;res(v);};
-    yes.onclick=()=>done(true);no.onclick=()=>done(false);
-    box.hidden=false;no.focus();
-  });
-}
-function noWrite(){
-  canWrite=false;setStatus('readonly');
-  toast('You have view-only access, so changes are not saved. Ask the owner for Contributor access.','err');
-}
-function isDenied(e){return e&&(e.code==='invalid_argument'||e.code==='not_granted');}
-
-async function writeFlat(f){
-  await DB.collection(COLL).doc(flatDocId(f.flatNo)).set(JSON.parse(JSON.stringify(f)));
-  storeIds.add(flatDocId(f.flatNo));
-}
-/* Save one flat (after the modal). oldNo = previous flat number if it was renamed. */
-async function persistOne(f,oldNo){
-  if(STORAGE_MODE!=='cloud'||!storeIds.size)return persist();   // empty store: write the whole set once
-  if(!canWrite)return noWrite();
-  setStatus('saving');
+async function persist(){        // write the whole list (import, reset, first save)
+  if(!CAN_WRITE){toast('You have view-only access, so changes are not saved.','err');return false;}
+  setStatus('saving');ensureIds();
+  if(STORAGE_MODE!=='cloud'){
+    try{localStorage.setItem(LOCAL_KEY,JSON.stringify(flats));STORAGE_MODE='local';setStatus('local');return true;}
+    catch(e){STORAGE_MODE='memory';setStatus('error');toast('This browser blocked saving. Download a JSON backup to keep your changes.','err');return false;}
+  }
+  writing++;
   try{
-    await writeFlat(f);
-    if(oldNo!=null&&flatDocId(oldNo)!==flatDocId(f.flatNo)){await DB.collection(COLL).doc(flatDocId(oldNo)).delete();storeIds.delete(flatDocId(oldNo));}
-    setStatus('saved');
-  }catch(e){if(isDenied(e))return noWrite();setStatus('error');toast('Could not save: '+(e&&e.message||'unknown error'),'err');}
+    for(const f of flats)await writeFlat(f);
+    const keep=new Set(flats.map(f=>f._id));
+    for(const id of [...storedIds])if(!keep.has(id)){await flatsCol().doc(id).delete();storedIds.delete(id);}
+    setStatus('saved');return true;
+  }catch(e){handleWriteError(e);return false;}
+  finally{writing--;flushSnap();}
 }
-/* Save the whole list (import / reset / first save): write every flat, delete flats no longer present. */
-async function persist(){
-  flats.forEach((f,i)=>f.order=i);
-  if(STORAGE_MODE==='cloud'){
-    if(!canWrite)return noWrite();
-    setStatus('saving');
-    try{
-      const keep=new Set(flats.map(f=>flatDocId(f.flatNo)));
-      for(let i=0;i<flats.length;i+=10)await Promise.all(flats.slice(i,i+10).map(writeFlat));
-      const stale=[...storeIds].filter(id=>!keep.has(id));
-      for(const id of stale){await DB.collection(COLL).doc(id).delete();storeIds.delete(id);}
-      setStatus('saved');
-    }catch(e){if(isDenied(e))return noWrite();setStatus('error');toast('Could not save: '+(e&&e.message||'unknown error'),'err');}
-    return;
-  }
-  try{localStorage.setItem(LOCAL_KEY,JSON.stringify(flats));STORAGE_MODE='local';setStatus('local');}
-  catch(e){STORAGE_MODE='memory';setStatus('error');}
+async function persistOne(f){    // write just the flat that changed
+  if(STORAGE_MODE!=='cloud'||!SNAP_READY||!storedIds.size)return persist();
+  if(!CAN_WRITE){toast('You have view-only access, so changes are not saved.','err');return false;}
+  setStatus('saving');writing++;
+  try{await writeFlat(f);setStatus('saved');return true;}
+  catch(e){handleWriteError(e);return false;}
+  finally{writing--;flushSnap();}
 }
 
-function applyRemote(snap){
-  storeIds=new Set(snap.docs.map(d=>d.id));
-  if(snap.empty){if(!flats.length){initSampleData();refresh();}setStatus('empty');return;}
-  const arr=snap.docs.map(d=>sanitizeFlat(d.data()||{})).sort((a,b)=>a.order-b.order);
-  const j=JSON.stringify(arr);
-  if(j!==lastSnapJson){lastSnapJson=j;flats=arr;refresh();}
-  if(!snap.metadata.hasPendingWrites&&canWrite)setStatus('saved');
-}
-
-async function connectStore(){
-  try{DB=(window.claude&&window.claude.use)?await window.claude.use('db'):null;}catch(e){DB=null;}
-  if(DB){
-    STORAGE_MODE='cloud';
-    DB.collection(COLL).onSnapshot(applyRemote,err=>{setStatus('error');toast('Lost connection to the shared data. Reload the page to reconnect.','err');});
-    return;
-  }
-  // Fallback: this browser only
-  STORAGE_MODE='local';
-  let saved=null;try{const v=localStorage.getItem(LOCAL_KEY);saved=v?JSON.parse(v):null;}catch(e){}
-  if(Array.isArray(saved)&&saved.length){flats=saved.map((f,i)=>sanitizeFlat(f,i));setStatus('local');}
-  else{initSampleData();setStatus('empty');}
+function modalOpen(){return document.getElementById('modal').style.display==='flex';}
+function applySnapshot(snap){
+  SNAP_READY=true;
+  storedIds=new Set(snap.docs.map(d=>d.id));
+  if(snap.empty)return;                         // nothing stored yet: keep the blank 30-flat layout
+  if(writing||modalOpen()){pendingSnap=snap;return;}
+  pendingSnap=null;
+  flats=snap.docs.map(d=>Object.assign(JSON.parse(JSON.stringify(d.data())),{_id:d.id}))
+    .sort((a,b)=>((a.order??1e9)-(b.order??1e9))||a._id.localeCompare(b._id));
   refresh();
 }
+function flushSnap(){if(pendingSnap&&!writing&&!modalOpen())applySnapshot(pendingSnap);}
 
-/* Offer a generated file through the viewer's download prompt */
+/* Downloads go through the viewer's save prompt on the live page */
 async function offerFile(filename,data){
-  let dl=null;try{dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null;}catch(e){dl=null;}
-  if(dl){
-    try{await dl.save({filename,data});toast('Downloaded '+filename,'ok');}
-    catch(e){if(e&&e.code==='declined')return;toast('Download did not complete: '+(e&&e.message||e&&e.code||'unavailable'),'err');}
-    return;
+  let dl=null;try{dl=window.claude&&await window.claude.use('downloads');}catch(e){}
+  if(!dl){
+    const url=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));
+    const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);return;
   }
-  try{const blob=data instanceof Blob?data:new Blob([data]);const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  catch(e){toast('Downloads are not available here.','err');}
+  try{await dl.save({filename,data});toast('Downloaded '+filename);}
+  catch(e){if(e&&e.code==='declined')return;toast(e&&e.code==='rate_limited'?'A download prompt is already open.':'Download is not available here.','err');}
 }
 
 /* Manual export / import / reset */
 function exportData(){
+  const clean=flats.map(f=>{const o=JSON.parse(JSON.stringify(f));delete o._id;delete o.order;return o;});
   offerFile('the_curve_collection_'+new Date().toISOString().slice(0,10)+'.json',
-    JSON.stringify({app:'TheCurveTracker',version:1,exportedAt:new Date().toISOString(),flats},null,2));
+    new Blob([JSON.stringify({app:'TheCurveTracker',version:1,exportedAt:new Date().toISOString(),flats:clean},null,2)],{type:'application/json'}));
 }
 function importData(input){
   const file=input.files&&input.files[0];if(!file)return;
@@ -468,11 +426,9 @@ function importData(input){
       const data=JSON.parse(e.target.result);
       const arr=Array.isArray(data)?data:data.flats;
       if(!Array.isArray(arr)||!arr.length)throw new Error('No flats found in file');
-      if(!await askConfirm('Replace all data?','Importing replaces all '+flats.length+' flats with the '+arr.length+' flats in this file'+(STORAGE_MODE==='cloud'?' for everyone on the team.':'.'),'Import')){input.value='';return;}
-      flats=arr.map((f,i)=>sanitizeFlat(f,i));
-      await persist();
-      refresh();
-      toast('Imported '+arr.length+' flats'+(STORAGE_MODE==='cloud'?' and shared them with your team.':'.'),'ok');
+      arr.forEach(f=>{delete f._id;});
+      flats=arr;ensureIds();refresh();
+      if(await persist())toast('Imported '+arr.length+' flats'+(STORAGE_MODE==='cloud'?' and shared them with your team.':'.'));
     }catch(err){toast('Import failed: '+err.message,'err');}
     input.value='';
   };
@@ -569,8 +525,7 @@ function exportExcel(){
   XLSX.utils.book_append_sheet(wb,pw,'Party-wise');
   XLSX.utils.book_append_sheet(wb,mw,'Month-wise');
   XLSX.utils.book_append_sheet(wb,lo,'Landowner Transfer');
-  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-  offerFile('The_Curve_Collection_Tracker_'+new Date().toISOString().slice(0,10)+'.xlsx',new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  offerFile('The_Curve_Collection_Tracker_'+new Date().toISOString().slice(0,10)+'.xlsx',new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})]));
 }
 
 function _norm(s){return String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]/g,'');}
@@ -623,11 +578,8 @@ function importExcel(input){
         const name=a.name||'';
         return{flatNo:key,floor:a.floor!=null?+a.floor:0,name,pan:a.pan||'',addr:a.addr||'',builtArea:a.built||0,saleArea:a.sale||0,parking:a.park||0,agDate:prevAg[key]||'',basePrice:a.price||20000000,parkPrice:a.pprice||1000000,status:name?'Active':'Pending',collections};
       });
-      if(!await askConfirm('Replace all data?','Importing replaces all '+flats.length+' flats with the '+newFlats.length+' flats in this workbook'+(STORAGE_MODE==='cloud'?' for everyone on the team.':'.'),'Import')){input.value='';return;}
-      flats=newFlats.map((f,i)=>sanitizeFlat(f,i));
-      await persist();
-      refresh();
-      toast('Synced '+newFlats.length+' flats from Excel'+(STORAGE_MODE==='cloud'?' and shared them with your team.':'.'),'ok');
+      flats=newFlats;ensureIds();refresh();
+      if(await persist())toast('Synced '+newFlats.length+' flats from Excel'+(STORAGE_MODE==='cloud'?' and shared them with your team.':'.'));
     }catch(err){toast('Excel import failed: '+err.message,'err');}
     input.value='';
   };
@@ -635,10 +587,9 @@ function importExcel(input){
 }
 
 async function resetData(){
-  if(!await askConfirm('Reset to blank template?','This clears every allottee and collection and restores 30 blank flats (F1–F30). It cannot be undone'+(STORAGE_MODE==='cloud'?' and affects your whole team. Download a JSON backup first.':'.'),'Reset'))return;
-  flats=[];initSampleData();
-  await persist();
-  refresh();
+  if(!await askConfirm('Clear every flat and start again with 30 blank flats? This cannot be undone'+(STORAGE_MODE==='cloud'?' and changes the data for everyone on your team.':'.'),'Clear all data'))return;
+  flats=[];initSampleData();ensureIds();refresh();
+  if(await persist())toast('Data cleared. 30 blank flats are ready.');
 }
 
 function initSampleData(){
@@ -698,7 +649,7 @@ function renderDashboard(){
   const depRec=Math.min(DEPOSIT,DEP_SPLIT*allBase*OWN);
   const depRem=Math.max(0,DEPOSIT-depRec);
   document.getElementById('dash-cards').innerHTML=[
-    {l:'Active flats',v:activeFl+'/'+(flats.length||30),s:'Allotted',c:'c-b'},
+    {l:'Active flats',v:activeFl+'/'+flats.length,s:'Allotted',c:'c-b'},
     {l:'Total collected (base)',v:cr(allBase),s:'Gross base recd',c:'c-g'},
     {l:'GST collected',v:cr(all.reduce((s,c)=>s+c.gst,0)),s:'Remit to govt',c:'c-a'},
     {l:'TDS deducted',v:lk(all.reduce((s,c)=>s+c.tds,0)),s:'Form 26AS credit',c:'c-r'},
@@ -749,7 +700,7 @@ function renderFlatTable(){
       <td class="tr mono tv-b">${colF(f,'dev')?cr(colF(f,'dev')):'—'}</td><td class="tr mono tv-g">${colF(f,'own')?cr(colF(f,'own')):'—'}</td>
       <td class="tc"><div style="display:flex;align-items:center;gap:3px;justify-content:center"><div class="pgb"><div class="pgb-f" style="width:${pct.toFixed(0)}%"></div></div><span style="font-size:10px;color:var(--text3);font-family:var(--mono)">${pct.toFixed(0)}%</span></div></td>
       <td class="tc"><span class="badge-sm" style="background:${sc}22;color:${sc};border:1px solid ${sc}44">${f.status}</span></td>
-      <td class="tc"><button class="btn" style="padding:3px 9px;font-size:11px" onclick="editFlat(${idx})">Edit</button></td>
+      <td class="tc"><button class="btn w-only" style="padding:3px 9px;font-size:11px" onclick="editFlat(${idx})">Edit</button></td>
     </tr>`;
   }).join('');
   const af=(k)=>filt.flatMap(f=>{let c=recd(f);if(mf)c=c.filter(x=>mKey(x.date)===mf);return c;}).reduce((s,x)=>s+x[k],0);
@@ -758,10 +709,9 @@ function renderFlatTable(){
 }
 
 function openStatement(flatNo){switchView('statement');document.getElementById('stmt-flat').value=flatNo;renderStatement();}
-function renderStatement(){
+function renderStatement(pref){
   const sel=document.getElementById('stmt-flat');
-  if(!sel.options.length){sel.innerHTML=flats.filter(f=>f.name).map(f=>`<option value="${f.flatNo}">${f.flatNo} — ${f.name}</option>`).join('')+flats.filter(f=>!f.name).map(f=>`<option value="${f.flatNo}">${f.flatNo} — (unassigned)</option>`).join('');}
-  if(renderStatement.keep){if([...sel.options].some(o=>o.value===renderStatement.keep))sel.value=renderStatement.keep;renderStatement.keep='';}
+  if(!sel.options.length){sel.innerHTML=flats.filter(f=>f.name).map(f=>`<option value="${f.flatNo}">${f.flatNo} — ${f.name}</option>`).join('')+flats.filter(f=>!f.name).map(f=>`<option value="${f.flatNo}">${f.flatNo} — (unassigned)</option>`).join('');if(pref&&flats.some(x=>x.flatNo===pref))sel.value=pref;}
   const f=flats.find(x=>x.flatNo===sel.value)||flats[0];
   if(!f){document.getElementById('stmt-content').innerHTML='';return;}
   const tb=totalBase(f);
@@ -769,7 +719,7 @@ function renderStatement(){
   const pct=tb>0?cBase/tb*100:0;const booking=f.collections[0];
   let html=`<div class="stmt-hdr">
     <div class="stmt-hdr-top"><div><h2>Flat ${f.flatNo} — ${f.name||'Unassigned'}</h2><div style="color:var(--text3);font-size:12px;margin-top:2px">The Curve, 54 Chowringhee Road, Kolkata · Floor ${f.floor||'—'}</div></div>
-    <button class="btn primary" onclick="editFlat(${flats.indexOf(f)})">Edit / Add Collection</button></div>
+    <button class="btn primary w-only" onclick="editFlat(${flats.indexOf(f)})">Edit / Add Collection</button></div>
     <div class="stmt-meta">
       <div><div class="m-lbl">PAN</div><div class="m-val mono">${f.pan||'—'}</div></div>
       <div><div class="m-lbl">Address</div><div class="m-val">${f.addr||'—'}</div></div>
@@ -885,11 +835,12 @@ function stageParty(base){
   };
 }
 
-function renderPartywise(){
+function renderPartywise(pref){
   // filters
   const fsel=document.getElementById('pw-flat');
   if(fsel && fsel.options.length<=1){
     flats.filter(f=>recd(f).length).forEach(f=>{const o=document.createElement('option');o.value=f.flatNo;o.textContent=f.flatNo+(f.name?' — '+f.name:'');fsel.appendChild(o);});
+    if(pref)fsel.value=pref;
   }
   const flatFilter=fsel?fsel.value:'';
   const partyFilter=document.getElementById('pw-party')?document.getElementById('pw-party').value:'';
@@ -987,9 +938,9 @@ function renderLandowner(){
   ].map(i=>`<div class="sc ${i.c}"><div class="sl">${i.l}</div><div class="sv">${i.v}</div><div class="ss">${i.s}</div></div>`).join('');
 }
 
-function addFlat(){editIdx=-1;editFlatNo=null;openModal();}
-function editFlat(idx){editIdx=idx;editFlatNo=flats[idx]?flats[idx].flatNo:null;closeModal();openModal(flats[idx]);}
-function closeModal(){document.getElementById('modal').style.display='none';}
+function addFlat(){editIdx=-1;openModal();}
+function editFlat(idx){editIdx=idx;closeModal();openModal(flats[idx]);}
+function closeModal(){document.getElementById('modal').style.display='none';flushSnap();}
 function openModal(f){
   document.getElementById('modal').style.display='flex';
   document.getElementById('modal-title').textContent=f?'Edit Flat — '+f.flatNo:'Add Flat';
@@ -1031,15 +982,11 @@ function saveFlat(){
   const g=id=>document.getElementById(id).value;
   const f={flatNo:g('f-flatno').trim(),floor:parseInt(g('f-floor'))||0,name:g('f-name').trim(),pan:g('f-pan').trim().toUpperCase(),addr:g('f-addr').trim(),builtArea:parseFloat(g('f-built'))||0,saleArea:parseFloat(g('f-sale'))||0,parking:parseInt(g('f-park'))||0,agDate:g('f-agdate'),basePrice:parseFloat(g('f-price'))||20000000,parkPrice:parseFloat(g('f-pprice'))||1000000,status:g('f-status'),collections:JSON.parse(JSON.stringify(collEntries))};
   if(!f.flatNo){toast('Enter a flat number before saving.','err');return;}
-  // Find the flat by number, not position: a teammate's change may have reordered the list
-  const cur=editFlatNo!=null?flats.findIndex(x=>x.flatNo===editFlatNo):-1;
-  const clash=flats.findIndex(x=>x.flatNo===f.flatNo);
-  if(clash>=0&&clash!==cur){toast('Flat '+f.flatNo+' already exists. Use Edit on that flat instead.','err');return;}
-  const clean=sanitizeFlat(f,cur>=0?flats[cur].order:flats.reduce((m,x)=>Math.max(m,x.order||0),-1)+1);
-  if(cur>=0)flats[cur]=clean;else flats.push(clean);
+  if(editIdx>=0){f._id=flats[editIdx]._id;f.order=flats[editIdx].order;flats[editIdx]=f;}else{f._id=newId();f.order=flats.length;flats.push(f);}
+  pendingSnap=null;               // our write brings a fresh snapshot
   closeModal();
   refresh();
-  persistOne(clean,cur>=0?editFlatNo:null);
+  persistOne(f);
 }
 
 function refresh(){
@@ -1047,20 +994,30 @@ function refresh(){
   const v=document.querySelector('.view.active').id.replace('view-','');
   if(v==='dashboard')renderDashboard();
   else if(v==='flats')renderFlatTable();
-  else if(v==='statement'){const ss=document.getElementById('stmt-flat');const keep=ss.value;ss.innerHTML='';renderStatement.keep=keep;renderStatement();}
-  else if(v==='partywise'){const pf=document.getElementById('pw-flat');const keep=pf?pf.value:'';if(pf)pf.innerHTML='<option value="">All flats</option>';renderPartywise();if(pf&&keep&&[...pf.options].some(o=>o.value===keep)){pf.value=keep;renderPartywise();}}
+  else if(v==='statement'){const ss=document.getElementById('stmt-flat');const cur=ss.value;ss.innerHTML='';renderStatement(cur);}
+  else if(v==='partywise'){const pf=document.getElementById('pw-flat');const cur=pf.value;pf.innerHTML='<option value="">All flats</option>';renderPartywise(cur);}
   else if(v==='monthwise')renderMonthTable();
   else if(v==='landowner')renderLandowner();
 }
 
-function boot(){
+async function boot(){
   setStatus('loading');
   renderStageLegend();
-  refresh();            // first frame renders empty; data arrives from the shared store
-  connectStore();
+  initSampleData();ensureIds();refresh();          // blank 30-flat layout until stored data arrives
+  for(let k=0;k<20&&!window.claude;k++)await new Promise(r=>setTimeout(r,100));
+  let db=null;try{db=window.claude&&await window.claude.use('db');}catch(e){}
+  if(db){
+    DB=db;STORAGE_MODE='cloud';setStatus('saved');
+    try{const u=await window.claude.use('user');if(u&&u.can&&(await u.can('data.write'))===false)setReadOnly();}catch(e){}
+    flatsCol().onSnapshot(applySnapshot,()=>{setStatus('error');toast('Live sync stopped. Reload the page to reconnect.','err');});
+  }else{
+    try{const v=localStorage.getItem(LOCAL_KEY);const a=v&&JSON.parse(v);if(Array.isArray(a)&&a.length){flats=a;ensureIds();refresh();}}catch(e){}
+    STORAGE_MODE='local';setStatus('local');
+  }
 }
 boot();
 </script>
+
 
 </body>
 </html>

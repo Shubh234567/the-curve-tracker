@@ -8,4 +8,4 @@ Tracks the 11 Schedule D payment stages for each flat, GST (5%), buyer TDS (1%, 
 
 Open `index.html` in a browser. Outside Claude, data is saved in that browser only (localStorage). Use **⭳ JSON** to back up and **⭱ Import JSON** to restore.
 
-The team-shared live version is hosted as a Claude artifact.
+The team-shared live version is hosted as a Claude artifact: https://claude.ai/artifact/11nWzE5oKQJbrDWH7e9gJK (only people it is shared with can open it).
